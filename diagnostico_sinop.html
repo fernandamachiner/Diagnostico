@@ -1,39 +1,99 @@
-<!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-book: Diagnóstico Situacional de Sinop/MT</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #FDFBF7;
-            color: #1f2937;
-        }
-        .section-header {
-            border-bottom: 2px solid #4A9090;
-            padding-bottom: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .content-box {
-            background-color: #ffffff;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-        .toc-link {
-            transition: color 0.2s ease;
-        }
-        .toc-link:hover {
-            color: #4A9090;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Painel Territorial – Sinop/MT</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/vue@3"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f7f9fb;
+    }
+    h1, h2 {
+      color: #2c3e50;
+    }
+    select, input[type="text"] {
+      padding: 8px;
+      margin: 10px 0;
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+    }
+    .ods {
+      font-weight: bold;
+      color: #16a085;
+    }
+  </style>
 </head>
-<body class="antialiased">
-<!-- The rest of the HTML content continues... -->
-</body>
+<body>
+  <div id="app">
+    <h1>Painel Interativo do Plano de Ação Territorial – Sinop/MT</h1><label for="ods">Filtrar por ODS:</label>
+<select v-model="selectedODS">
+  <option value="">Todos</option>
+  <option v-for="ods in odsList" :key="ods" :value="ods">{{ ods }}</option>
+</select>
+
+<label for="search">Buscar fator ou estratégia:</label>
+<input type="text" v-model="searchTerm" placeholder="Digite palavras-chave...">
+
+<div v-for="registro in filteredData" :key="registro.fator" class="card">
+  <p class="ods">{{ registro.ods }} – {{ registro.fator }}</p>
+  <p><strong>Vulnerabilidade:</strong> {{ registro.vulnerabilidade }}</p>
+  <p><strong>Estratégia:</strong> {{ registro.estrategia }}</p>
+  <p><strong>Prazo:</strong> {{ registro.prazo }}</p>
+  <p><strong>Responsáveis:</strong> {{ registro.responsaveis }}</p>
+</div>
+
+  </div>  <script>
+    Vue.createApp({
+      data() {
+        return {
+          selectedODS: '',
+          searchTerm: '',
+          registros: [
+            {
+              ods: "ODS 01",
+              fator: "Pobreza",
+              vulnerabilidade: "Remuneração abaixo do custo de vida...",
+              estrategia: "Fomentar um Fórum Permanente...",
+              prazo: "Longo",
+              responsaveis: "UFMT, UNEMAT, Fiocruz, etc."
+            },
+            {
+              ods: "ODS 03",
+              fator: "Dengue",
+              vulnerabilidade: "Falta de ACE e desconfiança da comunidade...",
+              estrategia: "Campanhas, contratação emergencial, mutirões...",
+              prazo: "Curto",
+              responsaveis: "Prefeitura, Fiocruz, Universidades"
+            },
+            // Inserir demais dados aqui... truncado por brevidade
+          ]
+        };
+      },
+      computed: {
+        odsList() {
+          return [...new Set(this.registros.map(r => r.ods))];
+        },
+        filteredData() {
+          return this.registros.filter(r => {
+            const matchesODS = this.selectedODS ? r.ods === this.selectedODS : true;
+            const matchesSearch = this.searchTerm.toLowerCase() === '' ||
+              r.fator.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+              r.estrategia.toLowerCase().includes(this.searchTerm.toLowerCase());
+            return matchesODS && matchesSearch;
+          });
+        }
+      }
+    }).mount('#app');
+  </script></body>
 </html>
